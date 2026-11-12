@@ -22,3 +22,4 @@ verify-report.json
 
 # DSH 会话状态
 .mnemon/
+.npm-cache-pf/
