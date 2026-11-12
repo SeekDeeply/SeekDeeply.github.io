@@ -1,0 +1,24 @@
+# 依赖
+node_modules/
+.npm-cache/
+
+# 构建产物
+dist/
+.astro/
+
+# 本地环境
+.env
+.env.*
+!.env.example
+
+# 系统与编辑器
+.DS_Store
+Thumbs.db
+*.log
+*.swp
+
+# 验证脚本临时产出
+verify-report.json
+
+# DSH 会话状态
+.mnemon/

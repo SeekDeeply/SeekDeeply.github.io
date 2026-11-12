@@ -1,0 +1,21 @@
+---
+import { SITE } from '../site.config';
+import { FEED } from '../consts';
+import Glyph from './Glyph.astro';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer" data-pagefind-ignore>
+  <div class="shell site-footer__inner">
+    <Glyph size={12} tone="accent" />
+    <span>© {year} {SITE.author}</span>
+    <span class="site-footer__sep" aria-hidden="true">·</span>
+    <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+    <span class="site-footer__sep" aria-hidden="true">·</span>
+    <a href={SITE.github} rel="me noopener" target="_blank">GitHub</a>
+    <span class="site-footer__sep" aria-hidden="true">·</span>
+    <a href={FEED}>RSS</a>
+    <span class="site-footer__right">{SITE.tagline}</span>
+  </div>
+</footer>

@@ -1,0 +1,56 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Glyph from '../components/Glyph.astro';
+import { SITE } from '../site.config';
+import { FEED } from '../consts';
+
+const labels = SITE.tags.map((tag) => tag.label).join(' · ');
+---
+
+<BaseLayout title="关于" description={`关于 ${SITE.name} 与站长 ${SITE.author}。`}>
+  <section class="section">
+    <div class="shell shell--narrow">
+      <div class="section__head">
+        <h1 class="section__title">
+          <Glyph size={10} tone="accent" />
+          关于
+        </h1>
+      </div>
+
+      <div class="prose">
+        <p>
+          {SITE.name} 是 {SITE.author} 的个人站点。签名只有八个字：{SITE.tagline}。
+          这里不追热点，也不做日更，只把想清楚的东西写下来。
+        </p>
+
+        <p>
+          站点的视觉元素来自头像：一块 <code>#f0f0f0</code> 的纸底，一组 <code>#8cdfaf</code>
+          的薄荷方块，按 5×5 的网格排成一个标记。整站只用这两种颜色和它们的深浅变体。
+        </p>
+
+        <h2>站长</h2>
+      </div>
+
+      <dl class="facts">
+        <dt>站长</dt>
+        <dd>{SITE.author}</dd>
+        <dt>邮箱</dt>
+        <dd><a href={`mailto:${SITE.email}`}>{SITE.email}</a></dd>
+        <dt>GitHub</dt>
+        <dd><a href={SITE.github} rel="me noopener" target="_blank">{SITE.github}</a></dd>
+        <dt>标签</dt>
+        <dd>{labels}</dd>
+        <dt>订阅</dt>
+        <dd><a href={FEED}>RSS</a></dd>
+      </dl>
+
+      <div class="prose" style="margin-top: 2rem;">
+        <h2>本站怎么跑</h2>
+        <p>
+          这是一个静态站点，源码托管在 GitHub。每次向仓库推送，GitHub Actions 会完成
+          依赖安装、类型检查、构建、全文索引与发布。没有本地构建，也没有服务器要维护。
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

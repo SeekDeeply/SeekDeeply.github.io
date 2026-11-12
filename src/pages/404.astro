@@ -1,0 +1,21 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Glyph from '../components/Glyph.astro';
+import { p } from '../consts';
+---
+
+<BaseLayout title="页面不存在" description="这个地址上没有内容。" noindex>
+  <section class="notfound" data-pagefind-ignore>
+    <div class="shell shell--narrow">
+      <p class="notfound__code">
+        <Glyph size={12} tone="accent" />
+        404
+      </p>
+      <h1 class="notfound__title">这个格子里什么都没有</h1>
+      <div class="notfound__actions">
+        <a class="btn btn--solid" href={p('/')}>回到首页</a>
+        <a class="btn" href={p('/tags')}>看看标签</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

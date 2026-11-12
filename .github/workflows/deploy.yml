@@ -1,0 +1,105 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# 默认工作流权限是 read，这里必须显式提权
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 同一时间只跑一个部署，但不打断正在进行的发布
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Install dependencies
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci --no-audit --no-fund
+          else
+            npm install --no-audit --no-fund
+            echo "::warning::package-lock.json 缺失，本次使用 npm install。请把锁文件提交到仓库。"
+          fi
+
+      - name: Astro sync
+        run: npx astro sync
+
+      - name: Type check
+        run: npm run check
+
+      - name: Build
+        run: npm run build
+
+      - name: Build search index
+        run: npm run search:index
+
+      - name: Verify build output
+        run: npm run verify
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v6
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist
+
+      - name: Upload dist for debugging
+        uses: actions/upload-artifact@v7
+        with:
+          name: dist
+          path: dist
+          retention-days: 7
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
+
+      - name: Smoke test
+        env:
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+        run: |
+          set -euo pipefail
+          echo "站点地址：$PAGE_URL"
+          failed=0
+          for path in "" "about/" "tags/" "tags/tech/" "search/" "rss.xml" "sitemap-index.xml" "404.html"; do
+            url="${PAGE_URL}${path}"
+            code=$(curl -s -o /dev/null -w '%{http_code}' --retry 5 --retry-delay 3 --retry-all-errors "$url" || echo 000)
+            echo "  $code  $url"
+            if [ "$code" != "200" ]; then failed=1; fi
+          done
+          # 搜索索引必须存在，否则站内搜索会静默失效
+          code=$(curl -s -o /dev/null -w '%{http_code}' --retry 5 --retry-delay 3 "${PAGE_URL}pagefind/pagefind-entry.json" || echo 000)
+          echo "  $code  ${PAGE_URL}pagefind/pagefind-entry.json"
+          if [ "$code" != "200" ]; then failed=1; fi
+          if [ "$failed" != "0" ]; then
+            echo "::error::冒烟测试失败，有路径没有返回 200"
+            exit 1
+          fi
+          echo "冒烟测试通过"

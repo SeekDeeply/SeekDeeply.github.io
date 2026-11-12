@@ -1,0 +1,92 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostCard from '../components/PostCard.astro';
+import TagChips from '../components/TagChips.astro';
+import Glyph from '../components/Glyph.astro';
+import { SITE } from '../site.config';
+import { p } from '../consts';
+import { countByTag, getPublishedPosts, readingMinutes } from '../lib/content';
+import avatar from '../assets/avatar.png';
+
+const posts = await getPublishedPosts();
+const counts = Object.fromEntries(countByTag(posts));
+const latest = posts.slice(0, SITE.latestCount);
+const labels = SITE.tags.map((tag) => tag.label);
+---
+
+<BaseLayout>
+  <section class="hero">
+    <div class="shell">
+      <div class="hero__top">
+        <div class="hero__glyph">
+          <Glyph size={44} tone="accent" />
+        </div>
+        <div>
+          <h1 class="hero__title">{SITE.name}</h1>
+          <p class="hero__tagline">{SITE.tagline}</p>
+          <div class="hero__meta">
+            <span>站长 {SITE.author}</span>
+            <span aria-hidden="true">·</span>
+            <span>{posts.length} 篇</span>
+          </div>
+        </div>
+        <Image
+          class="hero__avatar"
+          src={avatar}
+          alt={`${SITE.author} 的头像：薄荷绿方块在浅灰底上排成的标记`}
+          width={104}
+          height={104}
+          loading="eager"
+        />
+      </div>
+
+      <div class="hero__meta">
+        <TagChips tags={labels} counts={counts} />
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="shell">
+      <div class="section__head">
+        <h2 class="section__title">
+          <Glyph size={10} tone="accent" />
+          最新
+        </h2>
+        <a class="section__more" href={p('/tags')}>按标签浏览 →</a>
+      </div>
+
+      {
+        latest.length > 0 ? (
+          <ul class="post-list">
+            {latest.map((post) => (
+              <PostCard post={post} readingTime={readingMinutes(post.body ?? '')} />
+            ))}
+          </ul>
+        ) : (
+          <div class="empty">
+            还没有文章。在 <code>src/content/posts</code> 里放一篇 Markdown，推送后 CI 会自动发布。
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="shell">
+      <div class="section__head">
+        <h2 class="section__title">
+          <Glyph size={10} tone="accent" />
+          联系
+        </h2>
+      </div>
+      <dl class="facts">
+        <dt>邮箱</dt>
+        <dd><a href={`mailto:${SITE.email}`}>{SITE.email}</a></dd>
+        <dt>GitHub</dt>
+        <dd><a href={SITE.github} rel="me noopener" target="_blank">{SITE.github}</a></dd>
+      </dl>
+    </div>
+  </section>
+</BaseLayout>

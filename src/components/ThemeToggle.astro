@@ -1,0 +1,71 @@
+---
+// 主题：默认跟随系统；手动切换后写入 localStorage，并在 <html data-theme> 上固定。
+---
+
+<button
+  type="button"
+  class="theme-toggle"
+  id="theme-toggle"
+  aria-label="切换深浅色"
+  aria-pressed="false"
+  title="切换深浅色"
+>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true" focusable="false">
+    <circle cx="12" cy="12" r="4.2"></circle>
+    <path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2M5.4 5.4l1.6 1.6M17 17l1.6 1.6M18.6 5.4L17 7M7 17l-1.6 1.6" stroke-linecap="round"></path>
+  </svg>
+</button>
+
+<script>
+  const STORAGE_KEY = 'sdx-theme';
+  const root = document.documentElement;
+
+  function readStored(): 'light' | 'dark' | null {
+    try {
+      const value = localStorage.getItem(STORAGE_KEY);
+      return value === 'light' || value === 'dark' ? value : null;
+    } catch {
+      return null;
+    }
+  }
+
+  function effective(): 'light' | 'dark' {
+    const stored = readStored();
+    if (stored) return stored;
+    if (root.dataset.theme === 'light' || root.dataset.theme === 'dark') return root.dataset.theme;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+
+  function syncPressed() {
+    const button = document.getElementById('theme-toggle');
+    if (button) button.setAttribute('aria-pressed', String(effective() === 'dark'));
+  }
+
+  // ClientRouter 会在导航时重新执行模块脚本，用一个全局标记保证只绑定一次
+  const FLAG = '__sdxThemeBound';
+  const w = window as unknown as Record<string, boolean>;
+
+  if (!w[FLAG]) {
+    w[FLAG] = true;
+
+    document.addEventListener('click', (event) => {
+      const target = event.target as Element | null;
+      const button = target?.closest('#theme-toggle');
+      if (!button) return;
+
+      const next = effective() === 'dark' ? 'light' : 'dark';
+      root.dataset.theme = next;
+      try {
+        localStorage.setItem(STORAGE_KEY, next);
+      } catch {
+        /* 隐私模式下静默失败 */
+      }
+      syncPressed();
+    });
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', syncPressed);
+    document.addEventListener('astro:page-load', syncPressed);
+  }
+
+  syncPressed();
+</script>

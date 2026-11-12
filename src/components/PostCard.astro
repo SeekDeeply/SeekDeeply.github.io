@@ -1,0 +1,24 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { formatDate, isoDate, p } from '../consts';
+
+interface Props {
+  post: CollectionEntry<'posts'>;
+  readingTime?: number;
+}
+
+const { post, readingTime } = Astro.props;
+const { title, description, pubDate } = post.data;
+const href = p(`/posts/${post.id}`);
+---
+
+<li class="post-item">
+  <a class="post-item__link" href={href}>
+    <span class="post-item__title">{title}</span>
+    <span class="post-item__meta">
+      <time datetime={isoDate(pubDate)}>{formatDate(pubDate)}</time>
+      {typeof readingTime === 'number' && <span>{readingTime} 分钟</span>}
+    </span>
+    <span class="post-item__desc">{description}</span>
+  </a>
+</li>

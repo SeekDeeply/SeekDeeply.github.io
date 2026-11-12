@@ -1,0 +1,36 @@
+---
+import { SITE } from '../site.config';
+import { NAV, p } from '../consts';
+import Glyph from './Glyph.astro';
+import ThemeToggle from './ThemeToggle.astro';
+
+const path = Astro.url.pathname;
+const normalized = path.endsWith('/') ? path : path + '/';
+
+function isActive(target: string): boolean {
+  const href = p(target);
+  if (target === '/') return normalized === href;
+  return normalized === href || normalized.startsWith(href);
+}
+---
+
+<header class="site-header" data-pagefind-ignore>
+  <div class="shell site-header__inner">
+    <a class="brand" href={p('/')}>
+      <Glyph size={18} tone="accent" />
+      <span class="brand__name">{SITE.name}</span>
+    </a>
+
+    <nav class="site-nav" aria-label="主导航">
+      {
+        NAV.map((item) => (
+          <a href={p(item.path)} aria-current={isActive(item.path) ? 'page' : undefined}>
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <ThemeToggle />
+  </div>
+</header>

@@ -1,0 +1,29 @@
+{
+  "name": "seekdeeply-blog",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "SeekDeeply-反应体系 · 创意杂烩，技术熔炉",
+  "engines": {
+    "node": ">=22.23.4"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "check": "astro check --minimumFailingSeverity error",
+    "build": "astro build",
+    "preview": "astro preview",
+    "search:index": "pagefind --site dist --output-subdir pagefind --force-language zh",
+    "verify": "node scripts/verify-dist.mjs"
+  },
+  "dependencies": {
+    "@astrojs/rss": "4.0.19",
+    "@astrojs/sitemap": "3.7.4",
+    "astro": "7.4.11",
+    "sharp": "0.35.5"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.12",
+    "pagefind": "1.6.0",
+    "typescript": "5.9.3"
+  }
+}

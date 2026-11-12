@@ -1,0 +1,43 @@
+---
+interface Props {
+  size?: number;
+  /** 用当前文字颜色（currentColor）还是薄荷色 */
+  tone?: 'accent' | 'inherit';
+  class?: string;
+  title?: string;
+}
+
+const { size = 20, tone = 'inherit', class: className = '', title } = Astro.props;
+
+// 站点头像的 5x5 网格掩码，命中 12 格。
+const MASK = [
+  '#####',
+  '#...#',
+  '#.#.#',
+  '.....',
+  '#...#',
+];
+
+const path = MASK.flatMap((row, y) =>
+  [...row].flatMap((cell, x) => (cell === '#' ? [`M${x} ${y}h1v1h-1z`] : [])),
+).join('');
+---
+
+<svg
+  class:list={['glyph', className]}
+  width={size}
+  height={size}
+  viewBox="0 0 5 5"
+  role={title ? 'img' : 'presentation'}
+  aria-hidden={title ? undefined : 'true'}
+  focusable="false"
+  style={tone === 'accent' ? 'color: var(--mint)' : undefined}
+><path d={path} fill="currentColor" />{title && <title>{title}</title>}</svg>
+
+<style>
+  .glyph {
+    display: block;
+    flex: none;
+    shape-rendering: crispEdges;
+  }
+</style>

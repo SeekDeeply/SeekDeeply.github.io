@@ -1,0 +1,76 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from './BaseLayout.astro';
+import TagChips from '../components/TagChips.astro';
+import Glyph from '../components/Glyph.astro';
+import { formatDate, isoDate, p } from '../consts';
+import { readingMinutes } from '../lib/content';
+
+interface Props {
+  post: CollectionEntry<'posts'>;
+  body: string;
+  prev?: { id: string; title: string };
+  next?: { id: string; title: string };
+}
+
+const { post, body, prev, next } = Astro.props;
+const { title, description, pubDate, updatedDate, tags } = post.data;
+const minutes = readingMinutes(body);
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  type="article"
+  publishedTime={pubDate}
+  modifiedTime={updatedDate}
+  tags={[...tags]}
+>
+  <article class="shell shell--narrow post" data-pagefind-body>
+    <header class="post__head">
+      <h1 class="post__title">{title}</h1>
+      <div class="post__meta">
+        <time datetime={isoDate(pubDate)}>{formatDate(pubDate)}</time>
+        <span aria-hidden="true">·</span>
+        <span>{minutes} 分钟</span>
+        {
+          updatedDate && (
+            <>
+              <span aria-hidden="true">·</span>
+              <span class="post__updated">修订于 {formatDate(updatedDate)}</span>
+            </>
+          )
+        }
+        <TagChips tags={[...tags]} />
+      </div>
+    </header>
+
+    <div class="prose">
+      <slot />
+    </div>
+
+    <footer class="post__footer" data-pagefind-ignore>
+      <div class="tag-row">
+        <Glyph size={12} tone="accent" />
+        <span class="post__updated">写于 {formatDate(pubDate)}，共 {minutes} 分钟</span>
+      </div>
+
+      {(prev || next) && (
+        <nav class="pager" aria-label="相邻文章">
+          {prev && (
+            <a href={p(`/posts/${prev.id}`)} rel="prev">
+              <span class="pager__label">上一篇</span>
+              <span class="pager__title">{prev.title}</span>
+            </a>
+          )}
+          {next && (
+            <a href={p(`/posts/${next.id}`)} rel="next">
+              <span class="pager__label">下一篇</span>
+              <span class="pager__title">{next.title}</span>
+            </a>
+          )}
+        </nav>
+      )}
+    </footer>
+  </article>
+</BaseLayout>
