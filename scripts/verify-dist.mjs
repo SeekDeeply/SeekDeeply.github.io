@@ -224,6 +224,22 @@ if (existsSync(homePath)) {
 
 if (stats.posts === 0) warn('产物中没有任何文章页');
 
+/* ---------- 7. 各页面标题与描述 ---------- */
+for (const file of htmlFiles) {
+  const page = path.relative(DIST, file).split(path.sep).join('/');
+  if (page.startsWith('pagefind/')) continue;
+
+  const html = await readFile(file, 'utf8');
+
+  if (!/<title>[^<]{2,}<\/title>/.test(html)) fail(`${page}: <title> 为空`);
+  if (!/<meta\s+name="description"\s+content="[^"]{10,}"/.test(html)) {
+    fail(`${page}: 缺少 meta description`);
+  }
+
+  const headings = (html.match(/<h1[\s>]/g) ?? []).length;
+  if (headings !== 1) fail(`${page}: 应有且只有一个 <h1>，实际 ${headings} 个`);
+}
+
 finish();
 
 function finish() {

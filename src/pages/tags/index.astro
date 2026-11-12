@@ -15,12 +15,12 @@ const labels = SITE.tags.map((tag) => tag.label).join('、');
 <BaseLayout title="标签" description={`${SITE.name} 的全部标签：${labels}。`}>
   <section class="section">
     <div class="shell">
-      <div class="section__head">
-        <h1 class="section__title">
-          <Glyph size={10} tone="accent" />
+      <div class="page__head">
+        <h1 class="page__title">
+          <Glyph size={14} tone="accent" />
           标签
         </h1>
-        <span class="section__more">{posts.length} 篇 · {counts.length} 个格子</span>
+        <span class="page__aside">{posts.length} 篇 · {counts.length} 个格子</span>
       </div>
 
       <ul class="tag-grid">
