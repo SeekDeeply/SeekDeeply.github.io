@@ -108,30 +108,46 @@ function resolveTarget(cleanPath) {
   return null;
 }
 
+/**
+ * 只扫描真正的标签，跳过注释与 <script>/<style> 内容。
+ * 否则正文里出现的 `href="/xxx"` 这类示例代码会被误判成链接。
+ */
+function extractTags(html) {
+  const withoutComments = html.replace(/<!--[\s\S]*?-->/g, '');
+  const withoutRawText = withoutComments.replace(
+    /<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi,
+    (match) => match.replace(/[^<>]+/g, ''),
+  );
+  return [...withoutRawText.matchAll(/<[a-zA-Z][^>]*>/g)].map((match) => match[0]);
+}
+
 for (const file of htmlFiles) {
   const html = await readFile(file, 'utf8');
   const page = path.relative(DIST, file);
+  const pageDir = path.posix.dirname('/' + page.split(path.sep).join('/'));
 
-  for (const match of html.matchAll(ATTR)) {
-    const value = match[2];
-    if (!value || EXTERNAL.test(value)) continue;
-    if (value.startsWith('#') || value.startsWith('data:')) continue;
+  for (const tag of extractTags(html)) {
+    for (const match of tag.matchAll(ATTR)) {
+      const value = match[2];
+      if (!value || EXTERNAL.test(value)) continue;
+      if (value.startsWith('#') || value.startsWith('data:')) continue;
 
-    stats.links += 1;
+      stats.links += 1;
 
-    if (!value.startsWith('/')) {
-      const resolved = path.posix.join(path.posix.dirname('/' + page.split(path.sep).join('/')), value);
-      if (!resolveTarget(resolved)) fail(`${page}: 相对链接指向不存在的产物 -> ${value}`);
-      continue;
+      if (!value.startsWith('/')) {
+        const resolved = path.posix.join(pageDir, value);
+        if (!resolveTarget(resolved)) fail(`${page}: 相对链接指向不存在的产物 -> ${value}`);
+        continue;
+      }
+
+      const clean = stripBase(value);
+      if (clean === null) {
+        fail(`${page}: 站内链接缺少 ${BASE} 前缀 -> ${value}`);
+        continue;
+      }
+
+      if (!resolveTarget(clean)) fail(`${page}: 站内链接指向不存在的产物 -> ${value}`);
     }
-
-    const clean = stripBase(value);
-    if (clean === null) {
-      fail(`${page}: 站内链接缺少 ${BASE} 前缀 -> ${value}`);
-      continue;
-    }
-
-    if (!resolveTarget(clean)) fail(`${page}: 站内链接指向不存在的产物 -> ${value}`);
   }
 }
 
