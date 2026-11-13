@@ -4,7 +4,7 @@
 
 个人博客的源码。基于 [Astro](https://astro.build) 构建，托管在 GitHub Pages。
 
-**线上地址**：<https://seekdeeply.github.io/Blog/>
+**线上地址**：<https://seekdeeply.github.io/>
 
 ---
 
@@ -77,11 +77,11 @@ git push
 `scripts/verify-dist.mjs` 是上线前的最后一道机器闸门：
 
 - 必需产物存在（首页、404、RSS、sitemap、搜索页、Pagefind 索引）
-- 所有 HTML 里的站内链接都带 `/Blog` 前缀，并且指向真实存在的产物
-- sitemap 里每个 `<loc>` 都以 `https://seekdeeply.github.io/Blog/` 开头
-- RSS 可解析，条目链接都是带前缀的绝对地址
+- 所有 HTML 里的站内绝对链接都指向真实存在的文件（根路径部署，任何以 `/` 开头的路径都必须是产物）
+- sitemap 里每个 `<loc>` 都以 `https://seekdeeply.github.io/` 开头
+- RSS 可解析，条目链接都是绝对地址
 - Pagefind 索引语言是 `zh`，且页面数大于 0
-- 首页有 `lang="zh-CN"`、唯一的 `<h1>`、非空的 title 与 description、正确的 canonical
+- 每个页面都有非空 `<title>`、`meta description`、唯一的 `<h1>`
 
 任何一条不满足，构建就失败，不会部署。
 
@@ -105,17 +105,23 @@ scripts/verify-dist.mjs 产物断言
 
 ## 几个约定
 
-**站内链接一律走 `p()`。** 站点部署在子路径 `/Blog/` 下，所有站内绝对路径都要带前缀。模板里禁止手写 `href="/xxx"`，交给 `p()` 处理：
+**站内链接一律走 `p()`。** 站点里所有站内路径都经过这个函数，模板中禁止手写 `href="/xxx"`：
 
 ```ts
-p('/')            // → /Blog/
-p('/tags')        // → /Blog/tags/
-p('/rss.xml')     // → /Blog/rss.xml
+p('/')            // → /
+p('/tags')        // → /tags/
+p('/rss.xml')     // → /rss.xml
 ```
+
+它负责补尾斜杠、保留锚点与查询串、原样放行外链。部署在根路径时前缀为空；若将来迁到子路径，只改 `astro.config.mjs` 里的 `base`，不需要动模板。
 
 **站点文案只写在 `site.config.ts`。** 改站名、签名、邮箱，只改这一个文件。
 
 **样式只有一份，色板只有一套。** 浅色：纸底 `#f0f0f0`、墨字 `#16181a`、薄荷 `#8cdfaf`（只做填充，正文链接用加深的 `#176b43` 保证对比度）。深色模式自动跟随系统，也可以手动切换。
+
+## 部署形态
+
+仓库名是 `SeekDeeply.github.io`——这是 GitHub Pages 的「用户站」约定，所以站点直接挂在根路径 `https://seekdeeply.github.io/`，不需要子路径前缀。
 
 ## 本地开发（可选）
 

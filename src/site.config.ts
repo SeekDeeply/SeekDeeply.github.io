@@ -16,9 +16,9 @@ export const SITE = {
   email: 'i9888888885@163.com',
   github: 'https://github.com/SeekDeeply',
   githubName: 'SeekDeeply',
-  /** 部署位置：仓库子路径 */
+  /** 部署位置：用户站根路径 */
   url: 'https://seekdeeply.github.io',
-  base: '/Blog',
+  base: '/',
   /** 语言 */
   locale: 'zh-CN',
   lang: 'zh',

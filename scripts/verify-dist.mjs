@@ -5,14 +5,24 @@
  * 纯 Node，无第三方依赖。
  */
 import { readFile, readdir } from 'node:fs/promises';
-import { existsSync } from 'node:fs';
+import { existsSync, statSync } from 'node:fs';
+
+/** 存在且是普通文件（目录不能算命中） */
+function isFile(target) {
+  try {
+    return statSync(target).isFile();
+  } catch {
+    return false;
+  }
+}
 import path from 'node:path';
 
 const DIST = process.argv[2] ?? 'dist';
 const SITE_URL = 'https://seekdeeply.github.io';
-const BASE = '/Blog';
-const BASE_TRAILING = BASE + '/';
-const ORIGIN = SITE_URL + BASE_TRAILING;
+// 用户站部署在根路径；若日后改回子路径，只需改这一个常量
+const BASE = '/';
+const BASE_TRAILING = BASE;
+const ORIGIN = new URL(BASE, SITE_URL).href;
 
 const errors = [];
 const warnings = [];
@@ -77,8 +87,12 @@ const ATTR = /\b(href|src|action|poster)\s*=\s*"([^"]*)"/g;
 const EXTERNAL = /^(?:[a-z][a-z0-9+.-]*:|\/\/)/i;
 
 function stripBase(value) {
-  if (value === BASE) return '/';
-  if (value.startsWith(BASE_TRAILING)) return value.slice(BASE.length);
+  if (BASE_TRAILING === '/') {
+    // 根路径部署：任何以 '/' 开头的站内路径都是合法的
+    return value.startsWith('/') ? value : null;
+  }
+  if (value === BASE || value + '/' === BASE_TRAILING) return '/';
+  if (value.startsWith(BASE_TRAILING)) return value.slice(BASE_TRAILING.length - 1);
   return null;
 }
 
@@ -101,7 +115,7 @@ function resolveTarget(cleanPath) {
       path.join(DIST, relative, 'index.html'),
       path.join(DIST, relative + '.html'),
     ];
-    const hit = candidates.find((candidate) => existsSync(candidate) && !candidate.endsWith(path.sep));
+    const hit = candidates.find(isFile);
     if (hit) return hit;
   }
 
@@ -217,8 +231,8 @@ if (existsSync(homePath)) {
 
   if (!/<title>[^<]{2,}<\/title>/.test(html)) fail('首页 <title> 为空');
   if (!/<meta\s+name="description"\s+content="[^"]{10,}"/.test(html)) fail('首页缺少有效的 meta description');
-  if (!/<link\s+rel="canonical"\s+href="https:\/\/seekdeeply\.github\.io\/Blog\/"/.test(html)) {
-    fail('首页 canonical 不是 https://seekdeeply.github.io/Blog/');
+  if (!/<link\s+rel="canonical"\s+href="https:\/\/seekdeeply\.github\.io\/"/.test(html)) {
+    fail('首页 canonical 不是 https://seekdeeply.github.io/');
   }
 }
 

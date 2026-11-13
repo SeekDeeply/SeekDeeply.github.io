@@ -1,6 +1,6 @@
 import { SITE } from './site.config';
 
-/** 由 astro.config.mjs 的 base + trailingSlash 推导，形如 '/Blog/' */
+/** 由 astro.config.mjs 的 base + trailingSlash 推导。根路径部署时就是 '/' */
 const rawBase = import.meta.env.BASE_URL ?? '/';
 export const BASE = rawBase === '/' ? '/' : rawBase.replace(/\/*$/, '/');
 
@@ -10,10 +10,10 @@ export const SITEMAP = BASE + 'sitemap-index.xml';
 
 /**
  * 站内路径 → 可用的 href。模板里禁止手写 href="/xxx"。
- *   p('/')          -> '/Blog/'
- *   p('/tags')      -> '/Blog/tags/'
- *   p('/rss.xml')   -> '/Blog/rss.xml'
- *   p('/tags/#top') -> '/Blog/tags/#top'
+ *   p('/')          -> '/'
+ *   p('/tags')      -> '/tags/'
+ *   p('/rss.xml')   -> '/rss.xml'
+ *   p('/tags/#top') -> '/tags/#top'
  *   外链与 mailto 原样返回
  */
 export function p(input = '/'): string {
