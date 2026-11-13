@@ -1,0 +1,70 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Glyph from '../components/Glyph.astro';
+import { SITE } from '../site.config';
+import { FRIENDS, FRIEND_REQUIREMENTS } from '../data/friends';
+---
+
+<BaseLayout title="友链" description={`${SITE.name} 的友链，以及申请方式。`}>
+  <section class="section">
+    <div class="shell">
+      <div class="page__head">
+        <h1 class="page__title">
+          <Glyph size={14} tone="accent" />
+          友链
+        </h1>
+        <span class="page__aside">{FRIENDS.length} 个站点</span>
+      </div>
+
+      {
+        FRIENDS.length > 0 ? (
+          <ul class="friend-grid">
+            {FRIENDS.map((friend) => (
+              <li>
+                <a class="friend-card" href={friend.url} target="_blank" rel="noopener">
+                  {friend.avatar && (
+                    <img
+                      class="friend-card__avatar"
+                      src={friend.avatar}
+                      alt=""
+                      width="40"
+                      height="40"
+                      loading="lazy"
+                    />
+                  )}
+                  <span class="friend-card__body">
+                    <span class="friend-card__name">{friend.name}</span>
+                    <span class="friend-card__desc">{friend.description}</span>
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <div class="empty">这一页还空着。第一个位置留给你。</div>
+        )
+      }
+
+      <div class="prose" style="margin-top: 2.5rem;">
+        <h2>交换友链</h2>
+        <p>
+          我倾向于收录<b>本人长期维护、内容原创</b>的个人站点。请把下面这些信息发到
+          <a href={`mailto:${SITE.email}`}>{SITE.email}</a>，我读到之后会回复。
+        </p>
+      </div>
+
+      <ul class="checklist">
+        {FRIEND_REQUIREMENTS.map((item) => (
+          <li>{item}</li>
+        ))}
+      </ul>
+
+      <div class="prose">
+        <p>
+          收到后会先自己读几篇，再决定是否收录 —— 所以可能要等几天。被拒不代表你的站点不好，
+          只是这一页我想保持它自己的密度。
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

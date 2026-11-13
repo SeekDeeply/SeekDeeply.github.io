@@ -814,6 +814,19 @@ main { flex: 1 0 auto; }
 
 .site-footer__right { margin-left: auto; font-family: var(--font-mono); }
 
+.site-footer__nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.25rem;
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--line);
+  font-size: 0.8125rem;
+}
+
+.site-footer__nav a { color: var(--muted); }
+.site-footer__nav a:hover { color: var(--accent); text-decoration: none; }
+
 /* ---------- about table ---------- */
 .facts {
   margin: 0;
@@ -837,6 +850,280 @@ main { flex: 1 0 auto; }
 }
 
 .facts dd { font-size: 0.9375rem; }
+
+/* ---------- 项目页 ---------- */
+.project-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+
+.project {
+  padding: clamp(1.25rem, 3vw, 1.85rem);
+  background: var(--bg);
+}
+
+.project__head {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.project__name {
+  font-size: 1.25rem;
+  letter-spacing: -0.01em;
+  font-family: var(--font-mono);
+}
+
+.project__status {
+  padding: 0.05rem 0.45rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--muted);
+  font-size: 0.6875rem;
+  font-family: var(--font-mono);
+  letter-spacing: 0.04em;
+}
+
+.project__status--active {
+  background: var(--mint);
+  border-color: var(--mint);
+  color: #101310;
+  font-weight: 600;
+}
+
+.project__tagline {
+  margin-top: 0.4rem;
+  font-size: 1rem;
+  color: var(--fg);
+}
+
+.project__desc {
+  margin-top: 0.6rem;
+  color: var(--muted);
+  font-size: 0.9375rem;
+  line-height: 1.75;
+  max-width: 62ch;
+}
+
+.project__features {
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.project__features li {
+  position: relative;
+  padding-left: 1.15rem;
+  color: var(--fg);
+  font-size: 0.9rem;
+  line-height: 1.65;
+}
+
+.project__features li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 0.42rem;
+  height: 0.42rem;
+  background: var(--mint);
+}
+
+.project__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 1.1rem;
+}
+
+.project__chip {
+  padding: 0.1rem 0.45rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.02em;
+}
+
+.project__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 1.25rem;
+}
+
+/* ---------- 友链页 ---------- */
+.friend-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+
+.friend-card {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 1rem 1.1rem;
+  background: var(--bg);
+  color: inherit;
+  transition: background-color 160ms var(--ease);
+}
+
+.friend-card:hover {
+  background: var(--surface);
+  text-decoration: none;
+}
+
+.friend-card__avatar {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  object-fit: cover;
+}
+
+.friend-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.friend-card__name {
+  font-weight: 600;
+  font-size: 0.9375rem;
+}
+
+.friend-card:hover .friend-card__name { color: var(--accent); }
+
+.friend-card__desc {
+  color: var(--muted);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+/* ---------- 清单 ---------- */
+.checklist {
+  list-style: none;
+  margin: 1rem 0 0;
+  padding: 0;
+  border-top: 1px solid var(--line);
+}
+
+.checklist li {
+  position: relative;
+  padding: 0.6rem 0 0.6rem 1.3rem;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.9375rem;
+}
+
+.checklist li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 1.15em;
+  width: 0.42rem;
+  height: 0.42rem;
+  background: var(--mint);
+}
+
+/* ---------- 赞助页 ---------- */
+.sponsor-channels {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 1.75rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--line);
+}
+
+.sponsor-qr {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.sponsor-qr img {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.sponsor-qr figcaption {
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+}
+
+.sponsor-methods {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.sponsor-methods li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sponsor-methods__note {
+  color: var(--muted);
+  font-size: 0.8125rem;
+}
+
+.way-list {
+  list-style: none;
+  margin: 1rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+
+.way {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 1rem 1.1rem;
+  background: var(--bg);
+}
+
+.way__title { font-weight: 600; font-size: 0.9375rem; }
+
+.way__text {
+  color: var(--muted);
+  font-size: 0.875rem;
+  line-height: 1.65;
+}
+
+.way__link {
+  font-size: 0.8125rem;
+  color: var(--accent);
+}
+
+.sponsor-note { color: var(--muted); font-size: 0.875rem; }
 
 /* ---------- 无障碍工具类 ---------- */
 .visually-hidden:not(:focus):not(:active) {

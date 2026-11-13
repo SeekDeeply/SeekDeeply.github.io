@@ -1,0 +1,77 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Glyph from '../components/Glyph.astro';
+import { SITE } from '../site.config';
+import { PROJECTS } from '../data/projects';
+
+const statusLabel: Record<string, string> = {
+  active: '活跃开发',
+  maintained: '维护中',
+  paused: '暂停更新',
+};
+
+const sorted = [...PROJECTS].sort((a, b) => Number(b.featured ?? false) - Number(a.featured ?? false));
+---
+
+<BaseLayout title="项目" description={`${SITE.author} 维护的开源项目。`}>
+  <section class="section">
+    <div class="shell">
+      <div class="page__head">
+        <h1 class="page__title">
+          <Glyph size={14} tone="accent" />
+          项目
+        </h1>
+        <span class="page__aside">{sorted.length} 个</span>
+      </div>
+
+      {
+        sorted.length === 0 ? (
+          <div class="empty">还没有公开的项目。</div>
+        ) : (
+          <ul class="project-list">
+            {sorted.map((project) => (
+              <li class="project">
+                <div class="project__head">
+                  <h2 class="project__name">{project.name}</h2>
+                  <span class={`project__status project__status--${project.status}`}>
+                    {statusLabel[project.status]}
+                  </span>
+                </div>
+
+                <p class="project__tagline">{project.tagline}</p>
+                <p class="project__desc">{project.description}</p>
+
+                <ul class="project__features">
+                  {project.features.map((feature) => (
+                    <li>{feature}</li>
+                  ))}
+                </ul>
+
+                <div class="project__meta">
+                  {project.language && <span class="project__chip">{project.language}</span>}
+                  {project.license && <span class="project__chip">{project.license}</span>}
+                  {project.platforms?.map((platform) => (
+                    <span class="project__chip">{platform}</span>
+                  ))}
+                </div>
+
+                <div class="project__links">
+                  {project.repo && (
+                    <a class="btn btn--solid" href={project.repo} target="_blank" rel="noopener">
+                      源码
+                    </a>
+                  )}
+                  {project.homepage && (
+                    <a class="btn" href={project.homepage} target="_blank" rel="noopener">
+                      下载
+                    </a>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+  </section>
+</BaseLayout>

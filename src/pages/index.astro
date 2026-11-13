@@ -7,12 +7,14 @@ import Glyph from '../components/Glyph.astro';
 import { SITE } from '../site.config';
 import { p } from '../consts';
 import { countByTag, getPublishedPosts, readingMinutes } from '../lib/content';
+import { PROJECTS } from '../data/projects';
 import avatar from '../assets/avatar.png';
 
 const posts = await getPublishedPosts();
 const counts = Object.fromEntries(countByTag(posts));
 const latest = posts.slice(0, SITE.latestCount);
 const labels = SITE.tags.map((tag) => tag.label);
+const featured = [...PROJECTS].sort((a, b) => Number(b.featured ?? false) - Number(a.featured ?? false)).slice(0, 3);
 ---
 
 <BaseLayout>
@@ -72,6 +74,41 @@ const labels = SITE.tags.map((tag) => tag.label);
       }
     </div>
   </section>
+
+  {
+    featured.length > 0 && (
+      <section class="section">
+        <div class="shell">
+          <div class="section__head">
+            <h2 class="section__title">
+              <Glyph size={10} tone="accent" />
+              项目
+            </h2>
+            <a class="section__more" href={p('/projects')}>全部项目 →</a>
+          </div>
+
+          <ul class="post-list">
+            {featured.map((project) => (
+              <li class="post-item">
+                <a
+                  class="post-item__link"
+                  href={project.repo ?? project.homepage ?? p('/projects')}
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <span class="post-item__title">{project.name}</span>
+                  <span class="post-item__meta">
+                    {project.language && <span>{project.language}</span>}
+                  </span>
+                  <span class="post-item__desc">{project.tagline}</span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
 
   <section class="section">
     <div class="shell">

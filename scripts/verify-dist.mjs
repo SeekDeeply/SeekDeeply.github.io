@@ -58,6 +58,9 @@ const REQUIRED = [
   'search/index.html',
   'tags/index.html',
   'about/index.html',
+  'projects/index.html',
+  'friends/index.html',
+  'sponsor/index.html',
   'pagefind/pagefind.js',
   'pagefind/pagefind-entry.json',
 ];

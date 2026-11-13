@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Glyph from '../components/Glyph.astro';
 import { SITE } from '../site.config';
-import { FEED } from '../consts';
+import { FEED, p } from '../consts';
 
 const labels = SITE.tags.map((tag) => tag.label).join(' · ');
 ---
@@ -42,6 +42,12 @@ const labels = SITE.tags.map((tag) => tag.label).join(' · ');
         <dd>{labels}</dd>
         <dt>订阅</dt>
         <dd><a href={FEED}>RSS</a></dd>
+        <dt>项目</dt>
+        <dd><a href={p('/projects')}>开源项目</a></dd>
+        <dt>友链</dt>
+        <dd><a href={p('/friends')}>友链</a></dd>
+        <dt>赞助</dt>
+        <dd><a href={p('/sponsor')}>赞助</a></dd>
       </dl>
 
       <div class="prose" style="margin-top: 2rem;">

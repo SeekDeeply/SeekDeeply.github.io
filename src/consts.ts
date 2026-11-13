@@ -39,9 +39,16 @@ export function abs(input = '/'): string {
 
 export const NAV = [
   { label: '首页', path: '/' },
+  { label: '项目', path: '/projects' },
   { label: '标签', path: '/tags' },
   { label: '搜索', path: '/search' },
   { label: '关于', path: '/about' },
+] as const;
+
+/** 页脚导航：放不进顶栏的次要页面 */
+export const FOOTER_NAV = [
+  { label: '友链', path: '/friends' },
+  { label: '赞助', path: '/sponsor' },
 ] as const;
 
 /** 2026年11月12日 */

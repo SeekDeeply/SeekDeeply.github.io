@@ -1,0 +1,117 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Glyph from '../components/Glyph.astro';
+import { SITE } from '../site.config';
+import { SPONSOR } from '../data/sponsors';
+
+const methods = SPONSOR.methods.filter((method) => method.url);
+const hasAnyChannel = methods.length > 0 || Boolean(SPONSOR.qrImage);
+---
+
+<BaseLayout
+  title="赞助"
+  description={`支持 ${SITE.author} 持续写下去、做下去。`}
+  noindex={!SPONSOR.enabled}
+>
+  <section class="section">
+    <div class="shell shell--narrow">
+      <div class="page__head">
+        <h1 class="page__title">
+          <Glyph size={14} tone="accent" />
+          赞助
+        </h1>
+      </div>
+
+      <div class="prose">
+        <p>{SPONSOR.intro}</p>
+      </div>
+
+      {
+        hasAnyChannel ? (
+          <div class="sponsor-channels">
+            {SPONSOR.qrImage && (
+              <figure class="sponsor-qr">
+                <img src={SPONSOR.qrImage} alt="赞赏码" width="180" height="180" loading="lazy" />
+                <figcaption>扫码赞赏</figcaption>
+              </figure>
+            )}
+            {methods.length > 0 && (
+              <ul class="sponsor-methods">
+                {methods.map((method) => (
+                  <li>
+                    <a class="btn btn--solid" href={method.url} target="_blank" rel="noopener">
+                      {method.label}
+                    </a>
+                    {method.note && <span class="sponsor-methods__note">{method.note}</span>}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        ) : (
+          <div class="empty">
+            赞赏通道还没配置。想支持的话，先看看下面的「不用花钱的办法」。
+          </div>
+        )
+      }
+
+      <div class="prose" style="margin-top: 2.5rem;">
+        <h2>钱会花在哪</h2>
+      </div>
+
+      <ul class="checklist">
+        {SPONSOR.usage.map((item) => (
+          <li>{item}</li>
+        ))}
+      </ul>
+
+      <div class="prose" style="margin-top: 2.5rem;">
+        <h2>不用花钱的办法</h2>
+        <p>多数时候，这些比钱有用。</p>
+      </div>
+
+      <ul class="way-list">
+        {
+          SPONSOR.freeWays.map((way) => (
+            <li class="way">
+              <span class="way__title">{way.title}</span>
+              <span class="way__text">{way.text}</span>
+              <a class="way__link" href={way.url} target="_blank" rel="noopener">
+                去看看 →
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+
+      {
+        SPONSOR.supporters.length > 0 && (
+          <div class="prose" style="margin-top: 2.5rem;">
+            <h2>赞助者</h2>
+            <ul class="checklist">
+              {SPONSOR.supporters.map((supporter) => (
+                <li>
+                  {supporter.url ? (
+                    <a href={supporter.url} target="_blank" rel="noopener">
+                      {supporter.name}
+                    </a>
+                  ) : (
+                    supporter.name
+                  )}
+                  {supporter.note && <span class="sponsor-note"> · {supporter.note}</span>}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+
+      <div class="prose" style="margin-top: 2.5rem;">
+        <p>
+          对赞助有疑问，或者想以别的方式合作，写信到
+          <a href={`mailto:${SPONSOR.contactEmail}`}>{SPONSOR.contactEmail}</a>。
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
